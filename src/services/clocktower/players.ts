@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import readline from 'readline';
 
 import { asyncReadline } from '../readline';
-import { Player, PlayerResponse } from '../types';
+import { Player, PlayerResponse, PlayerStatus } from './types';
 import { joinWithWord } from '../utils';
 import { generateResponse } from '../vertex-ai';
 
@@ -170,5 +170,16 @@ export const broadcastMessage = async (
       `./generated/${player.name}.csv`,
       `"Message","${message}","",""\n`
     );
+  }
+};
+
+export const formatPlayerStatus = (status: PlayerStatus): string => {
+  switch (status) {
+    case 'alive':
+      return 'Alive';
+    case 'dead-without-vote':
+      return 'Dead without Ghost Vote';
+    case 'dead-with-vote':
+      return 'Dead with Ghost Vote)';
   }
 };

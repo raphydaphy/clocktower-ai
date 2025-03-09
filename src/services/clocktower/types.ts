@@ -1,5 +1,9 @@
 import { Content } from '@google/generative-ai';
 
+export type GameStatus = 'evil-wins' | 'good-wins' | 'ongoing';
+
+export type PlayerStatus = 'alive' | 'dead-with-vote' | 'dead-without-vote';
+
 export type Player = {
   name: string;
   actualRole: string;
@@ -7,6 +11,7 @@ export type Player = {
   tokenShown?: string;
   chatHistory: Content[];
   actionHistory: string[];
+  status: PlayerStatus;
 };
 
 export type PlayerResponse = {
@@ -17,3 +22,15 @@ export type PlayerResponse = {
 };
 
 export type PlayerResponseWithPlayer = PlayerResponse & { player: Player };
+
+export type NominationResult = {
+  result: 'on-the-block' | 'tie' | 'insufficient-votes';
+  votes: number;
+  nominator: Player;
+  nominee: Player;
+};
+
+export type PlayerDiscussionResult = {
+  action: string;
+  nomination?: NominationResult;
+};

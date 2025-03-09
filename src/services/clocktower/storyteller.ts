@@ -1,7 +1,7 @@
 import readline from 'readline';
 
 import { asyncReadline } from '../readline';
-import { Player } from '../types';
+import { Player } from './types';
 import { sendMessageToPlayer } from './players';
 
 export const runPlayerConversationWithStoryteller = async (

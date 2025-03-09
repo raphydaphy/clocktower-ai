@@ -1,4 +1,4 @@
-import { Player } from '../types';
+import { Player } from './types';
 import { joinWithWord, randomSleep } from '../utils';
 import {
   broadcastMessage,
