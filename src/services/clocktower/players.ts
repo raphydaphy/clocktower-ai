@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import readline from 'readline';
 
 import { asyncReadline } from '../readline';
-import { Player, PlayerResponse, PlayerStatus } from './types';
 import { joinWithWord } from '../utils';
 import { generateResponse } from '../vertex-ai';
+import { Player, PlayerResponse, PlayerStatus } from './types';
 
 export const sendMessageToPlayer = async (
   systemInstruction: string,

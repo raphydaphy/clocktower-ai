@@ -18,7 +18,10 @@ import {
   sendMessageToPlayer,
 } from '../src/services/clocktower/players';
 import { startPrivateChat } from '../src/services/clocktower/private-chat';
-import { runPlayerConversationWithStoryteller } from '../src/services/clocktower/storyteller';
+import {
+  runPlayerConversationWithStoryteller,
+  selectAndKillPlayer,
+} from '../src/services/clocktower/storyteller';
 import { startNomination } from '../src/services/clocktower/nomination';
 
 // Players are in clockwise order, starting from the top middle of the circle
@@ -85,25 +88,13 @@ async function runNightPhase() {
   if (userInput === 'E') {
     return;
   } else if (userInput === 'K') {
-    const player = await selectPlayer(
-      rl,
-      players,
-      `Enter the name of the player that you want to kill`
-    );
+    await selectAndKillPlayer(rl, players);
 
-    if (player.status !== 'alive') {
-      console.info(`You have killed ${player.name}!`);
-      player.status = 'dead-with-vote';
-
-      const gameStatus = getGameStatus();
-      if (gameStatus !== 'ongoing') {
-        finishGame(gameStatus);
-        return;
-      }
-    } else {
-      console.info(`${player.name} was already dead, so nothing happens.`);
+    const gameStatus = getGameStatus();
+    if (gameStatus !== 'ongoing') {
+      finishGame(gameStatus);
+      return;
     }
-
     return runNightPhase();
   } else if (userInput !== 'W') {
     console.warn(`You must choose [W], [K] or [E]!`);
@@ -129,6 +120,54 @@ async function runNightPhase() {
   return runNightPhase();
 }
 
+async function usePublicAbility(
+  player: Player,
+  message: string,
+  selectedPlayer?: string
+) {
+  console.info(`${player.name} wants to use a public ability: ${message}`);
+
+  await broadcastMessage(
+    players,
+    `${player.name} has used a public ability: ${message}`,
+    [player.name]
+  );
+
+  const userInput = (
+    await asyncReadline(
+      rl,
+      `${player.name} has tried to use a public ability. Would you like to [S]end a message, [K]ill a player or [E]nd the game?`
+    )
+  ).toUpperCase();
+
+  if (userInput === 'K') {
+    await selectAndKillPlayer(rl, players);
+
+    const gameStatus = getGameStatus();
+    if (gameStatus !== 'ongoing') {
+      return finishGame(gameStatus);
+    }
+  } else if (userInput === 'E') {
+    const winningTeam = (
+      await asyncReadline(
+        rl,
+        `What team should win the game? [G]ood or [Evil]? `
+      )
+    ).toUpperCase();
+
+    return finishGame(winningTeam === 'G' ? 'good-wins' : 'evil-wins');
+  } else if (userInput !== 'S') {
+    console.warn(`You must choose [S], [K] or [E]!`);
+    return usePublicAbility(player, message, selectedPlayer);
+  }
+
+  const messageForTown = await asyncReadline(
+    rl,
+    `How would you respond to to the town: `
+  );
+  await broadcastMessage(players, messageForTown);
+}
+
 /**
  * Gets player input and returns the action taken
  *
@@ -148,7 +187,7 @@ async function getPlayerInputForDiscussionPhase(
       !nominationsOpen && `It's currently the discussion phase`,
       nominationsOpen &&
         !existingNomination &&
-        `It's currently the nomination phase`,
+        `It's currently the nomination phase. You can nominate a player for execution, or make a public announcement. You can no longer talk to the storyteller in private (e.g. to use character abilities) - you'll need to wait until the next day if you want to do this.`,
       nominationsOpen &&
         existingNomination &&
         `It's currently the nomination phase and ${existingNomination.nominee} is on the block for execution with ${existingNomination.votes} votes. You can still nominate a different player if you think they should die instead, or you can do nothing and the ${existingNomination.nominee.name} will be executed shortly.`,
@@ -156,6 +195,8 @@ async function getPlayerInputForDiscussionPhase(
       .filter(Boolean)
       .join(' ')}. You can make any of the following actions: \n${[
       ` - 'announcement': Publicly announce some information to all players. You must put your announcement in the 'announcement' property`,
+      !nominationsOpen &&
+        ` - 'public_ability': Use a character ability that functions in public, such as the Slayer or the Klutz. If you are targeting a player with your ability, you need to specify the player you are targeting in the 'player' property. You must also include a message to the storyteller and the town which explains what you are doing in the 'message' property. You can attempt to use a public ability even if you don't actually have the ability, and if it doesn't work you can always claim that you might be drunk or poisoned, etc`,
       !nominationsOpen &&
         ` - 'request_private_chat': Request a private chat with one or more players. You will need to include a message to publicly ask those players to chat using the 'message' property `,
       !nominationsOpen &&
@@ -170,6 +211,7 @@ async function getPlayerInputForDiscussionPhase(
       )}\n\nPlease respond with a JSON object including your 'reasoning', 'action' and the 'message' that you would like to share, if applicable to the action you are taking. If you need to list one or more players as part of your action, include a string array with the property 'players' in your response`,
     [
       'announcement',
+      !nominationsOpen && 'public_ability',
       !nominationsOpen && 'request_private_chat',
       !nominationsOpen && 'talk_to_storyteller',
       nominationsOpen && 'nominate',
@@ -194,6 +236,21 @@ async function getPlayerInputForDiscussionPhase(
       [selectedPlayer.name]
     );
     return { action: 'announcement' };
+  } else if (playerResponse.action === 'public_ability') {
+    if (!playerResponse.message) {
+      console.error(`Public ability use is missing message`, {
+        selectedPlayer,
+        playerResponse,
+      });
+      throw new Error(`Public ability use was missing message!`);
+    }
+
+    await usePublicAbility(
+      selectedPlayer,
+      playerResponse.message,
+      playerResponse.players?.length ? playerResponse.players[0] : undefined
+    );
+    return { action: 'public_ability' };
   } else if (playerResponse.action === 'talk_to_storyteller') {
     if (nominationsOpen) {
       throw new Error(`Cannot talk to storyteller during nominations!`);
