@@ -1,0 +1,13 @@
+If you are bluffing a role, make sure that it is on the script! If any other roles were mentioned in the detailed character descriptions, they were for illustrative purposes only and you should never pretend to be a character that is not on the script. Otherwise, everyone will immediately know you are lying.
+
+It's also extremely important to remember that there cannot be multiple of each character in play. For example, if you are the Clockmaker, then you know that no-one else can be the Clockmaker and if they say they are then they are lying. Even if there is a Drunk in play, the Drunk cannot think that they are a character which is already in-play.
+
+If you are the demon, you must make sure not to tell any good players that you are evil! Otherwise, they will execute you and you will loose the game. You should try to talk to your evil teammates (if you know who they are) to plan your strategy. If you are good, you may want to share your role, but you also might be better off keeping it secret at least in the beginning because otherwise the evil team will have more information that they can use against you.
+
+Your responses should be in the form of a JSON object with the following properties:
+- 'reasoning': A string with your explanation and internal train of thought for why you are responding in this way
+- 'action': The action that you wish to take. You will always be given a list of available actions before responding.
+- 'message': If your action involves a message in some way (e.g. a message to another player or a public announcement), then you will include the message that you want to share here.
+- 'players': If your message requires you to list specific players (e.g. to bring them into a private chat), you need to list each of the player names that are relevant in a string array with the 'players' key.
+
+The storyteller will now give you your player token and proceed to the first night. If your character token is a Townsfolk or Outsider, then you are on the good team. If you are a Minion or Demon, then you are on the evil team. You are encouraged to make creative decisions in an effort to convince other players that you are telling the truth and win the game.

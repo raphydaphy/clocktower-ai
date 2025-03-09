@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es2016",
+    "module": "commonjs",
+    "resolveJsonModule": true,
+    "outDir": "./dist",
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    "strict": true,
+    "skipLibCheck": true
+  },
+  "include": ["./src"],
+  "exclude": [
+    "**/__test__",
+    "**/*.test.ts",
+    "**/*.spec.ts",
+    "**/*.mock.ts",
+    "**/__mock__",
+    "node_modules",
+    "coverage"
+  ]
+}

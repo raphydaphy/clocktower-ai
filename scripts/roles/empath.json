@@ -1,0 +1,29 @@
+{
+  "name": "Empath",
+  "type": "townsfolk",
+  "ability": "Each night, you learn how many of your 2 alive neighbors are evil.",
+  "detailed_description": "The Empath keeps learning if their living neighbours are good or evil. The Empath only learns how many of their neighbours are evil, not which one is evil. The Empath does not detect dead players. So, if the Empath is sitting next to a dead player, they do not get info about that dead player. Instead, they get info about the closest alive player in that direction. The Empath acts after the Demon, so if the Demon kills one of the Empath's alive neighbours, the Empath does not learn about the now-dead player. The Empath's information is accurate at dawn, not at dusk. Each night, the Empath will wake up and the storyteller will tell them a number(0, 1, or 2) equaling the number of evil players neighbouring the Empath.",
+  "player_tips": [
+    "You get information based on the state of the game when you wake up (after the Demon has killed that night). This means that if one of your neighbours died in the night, you immediately start to learn about the next living player.",
+    "The information you receive should inform how you handle your neighbours.",
+    "If you get a '0', you are (probably) sitting between two good players who you can coordinate with and might want to try to keep alive.",
+    "If you get a count of '1', then one of your neighbours is trustworthy, and one is not. You should try to determine which one of your neighbours you trust, and eliminate the other one.",
+    "If you get a count of '2', then you are sitting between two evil players, and should probably look to change that as soon as possible.",
+    "If you trust your neighbours, keeping them alive drastically narrows the list of demon suspects.",
+    "If your neighbours die, you will receive new information on the next nearest living player to you. Getting your neighbours killed means you know more. Coordinating with an Undertaker to confirm the identities of your neighbours and getting new information down the line is a powerful combo. Even if your neighbours are both good, it can be worth executing a Slayer who has used their ability so that you know if you can trust the information from the Fortune Teller the other side of them.",
+    "Coming out with your information early (especially if you know you're sitting near evil players) can help you coordinate with the rest of the good team to further check out your suspects.",
+    "Waiting to reveal your information means that you can protect your good neighbours or keep an eye on your evil ones, as well as gather a wider portfolio of information.",
+    "If you get a count of '1' or '2', consider telling your neighbours you got a count of '0' instead. This will make you appear to be the Drunk or poisoned, and the evil team may be more inclined to keep you alive since you do not appear to be a threat. You could also try claiming to be the Soldier or another character the Demon doesn't want to attack. Remember to come out with your real information before the end of the game!",
+    "Travellers who neighbour you count for your information. If you're suddenly getting a '1' when previously you were getting '0', look to the newly arrived Traveller with some suspicion.",
+    "Beware the Spy! They may register as good for you, and give you an incorrect count. Additionally, the Recluse may register as evil, making you believe you are sitting next to an evil player when that is not actually the case."
+  ],
+  "bluffing_tips": [
+    "Every night, including the first night, you would have been woken and shown either a '0', '1' or '2'",
+    "Claiming you got a '0' will compel your good neighbours to trust you, allowing you to build up trust and redirect them away from your fellow evil team. This claim can also protect a fellow evil player, and give you a good reason to speak in secret.",
+    "Falsly claiming that you got a '1' will allow you pit your good neighbours against each other, and undermine both of them in the eyes of the group. You can still use this to build up trust with a neighbour (by telling them you believe they're the good one), but also allows you to gun for the execution of your neighbour.",
+    "Claiming that you got a '1' when you neighbour an evil player, is dangerous, but can pay off. If you are a Scarlet Woman and claim you got a '1' when sat next to the Imp or vice versa can make it look to the rest of the group like if one of you is evil, the other is good - but be careful, because they might just decide to execute both of you.",
+    "Claiming to get a '2' is a more difficult but also more devastating bluff. Both of your neighbours will know you are lying and are evil, but if the group believes you, then you're undermining two good players and hopefully wasting the good team's time on executions.",
+    "When your neighbours die, you can try changing up your count - this can be used to further damn the recently dead, or to imply the surviving neighbour was evil all along. If you are trying a risky bluff, be conscious of this - claiming to still get a '2' after one of your evil neighbours has been killed might cast doubt on you.",
+    "An Empath is a powerful character, especially as their neighbours die and they get new information on other players. If you are alive in the late game, it may be seen as suspicious. Being secretive about who you are among the players, or claiming to be the Drunk/poisoned are both great ways to justify your longevity if the group is getting suspicious."
+  ]
+}
