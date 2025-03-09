@@ -1,3 +1,5 @@
+import { MAXIMUM_DELAY, MINIMUM_DELAY } from './constants';
+
 /**
  * Joins the items in the array with commas, adding an 'and' before the last item
  * e.g. ['James', 'Clark', 'Alex'] => 'James, Clark and Alex
@@ -19,4 +21,13 @@ export const joinWithWord = (values: string[], word = 'and'): string => {
 
 export const sleep = (ms: number): Promise<void> => {
   return new Promise(resolve => setTimeout(resolve, ms));
+};
+
+/**
+ * Sleeps for a random amount of time between MINIMUM_DELAY and MAXIMUM_DELAY
+ */
+export const randomSleep = async (): Promise<void> => {
+  await sleep(
+    Math.floor(MINIMUM_DELAY + Math.random() * (MAXIMUM_DELAY - MINIMUM_DELAY))
+  );
 };

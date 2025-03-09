@@ -87,5 +87,17 @@ const createSystemPrompt = (roles: string[]) => {
 
 fs.writeFileSync(
   './prompts/generated.txt',
-  createSystemPrompt(['clockmaker', 'empath', 'investigator'])
+  createSystemPrompt([
+    'investigator',
+    'clockmaker',
+    'empath',
+    'chambermaid',
+    'artist',
+    'sage',
+    'drunk',
+    'klutz',
+    'baron',
+    'scarlet-woman',
+    'imp',
+  ])
 );
