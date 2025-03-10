@@ -1,7 +1,7 @@
 import readline from 'readline';
 
-import { asyncReadline } from '../readline';
-import { selectPlayer, sendMessageToPlayer } from './players';
+import { asyncReadline } from '../services/readline';
+import { broadcastMessage, selectPlayer, sendMessageToPlayer } from './players';
 import { Player } from './types';
 
 export const runPlayerConversationWithStoryteller = async (
@@ -58,4 +58,13 @@ export const selectAndKillPlayer = async (
   }
 
   return player;
+};
+
+export const makeStorytellerAnnouncement = async (
+  rl: readline.Interface,
+  players: Player[]
+) => {
+  const message = await asyncReadline(rl, `What would you like to announce: `);
+
+  await broadcastMessage(players, message);
 };

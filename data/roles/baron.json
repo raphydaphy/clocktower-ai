@@ -1,6 +1,6 @@
 {
   "name": "Baron",
-  "type": "townsfolk",
+  "type": "minion",
   "ability": "There are extra Outsiders in play. [+1 Outsiders]",
   "detailed_description": "The Baron changes the number of Outsiders present in the game. This change happens during setup, and it does not revert if the Baron dies. A change in characters during setup, regardless of what happens during the game, is shown on character sheets and tokens in square brackets at the end of a character's description—like [this]. The added Outsiders always replace Townsfolk, not other character types. While setting a game with a Baron in play, the storyteller would remove a Townsfolk character token and add an Outsider character token instead. (If they add a character that has their own set-up rules such as the Drunk, they would need to follow its setup instructions as well.) The Outsider token go into the bag instead of the Townsfolk token.",
   "player_tips": [

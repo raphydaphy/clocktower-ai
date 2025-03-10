@@ -1,6 +1,6 @@
 import readline from 'readline';
 
-import { joinWithWord, randomSleep } from '../utils';
+import { joinWithWord, randomSleep } from '../services/utils';
 import {
   broadcastMessage,
   getRandomActivePlayer,

@@ -1,8 +1,0 @@
-.git
-Dockerfile
-.gitignore
-.dockerignore
-
-.env
-node_modules
-scripts

@@ -1,185 +1,40 @@
-import 'dotenv/config';
-import {
-  GameStatus,
-  NominationResult,
-  Player,
-  PlayerDiscussionResult,
-} from '../src/services/clocktower/types';
-import * as fs from 'node:fs';
 import readline from 'readline';
-import { asyncReadline } from '../src/services/readline';
-import { joinWithWord, randomSleep } from '../src/services/utils';
+
+import { asyncReadline } from '../services/readline';
+import { joinWithWord, randomSleep } from '../services/utils';
+import { startNomination } from './nomination';
 import {
   broadcastMessage,
-  formatPlayerStatus,
   getRandomActivePlayer,
-  initializePlayers,
-  selectPlayer,
   sendMessageToPlayer,
-} from '../src/services/clocktower/players';
-import { startPrivateChat } from '../src/services/clocktower/private-chat';
+} from './players';
+import { startPrivateChat } from './private-chat';
+import { usePublicAbility } from './public-ability';
+import { finishGame, getGameStatus } from './status';
 import {
+  makeStorytellerAnnouncement,
   runPlayerConversationWithStoryteller,
-  selectAndKillPlayer,
-} from '../src/services/clocktower/storyteller';
-import { startNomination } from '../src/services/clocktower/nomination';
-
-// Players are in clockwise order, starting from the top middle of the circle
-const players: Player[] = [
-  {
-    name: 'Harper',
-    actualRole: 'Scarlet Woman',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Maya',
-    actualRole: 'Empath',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Arun',
-    actualRole: 'Artist',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Ziggy',
-    actualRole: 'Imp',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Joanna',
-    actualRole: 'Clockmaker',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Anne',
-    actualRole: 'Chambermaid',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-];
-
-const systemInstruction = fs.readFileSync('./prompts/generated.txt', 'utf-8');
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-async function runNightPhase() {
-  const userInput = (
-    await asyncReadline(
-      rl,
-      `Would you like to [W]ake a player, [K]ill a player or [E]nd the night: `
-    )
-  ).toUpperCase();
-
-  if (userInput === 'E') {
-    return;
-  } else if (userInput === 'K') {
-    await selectAndKillPlayer(rl, players);
-
-    const gameStatus = getGameStatus();
-    if (gameStatus !== 'ongoing') {
-      finishGame(gameStatus);
-      return;
-    }
-    return runNightPhase();
-  } else if (userInput !== 'W') {
-    console.warn(`You must choose [W], [K] or [E]!`);
-    return runNightPhase();
-  }
-
-  const player = await selectPlayer(
-    rl,
-    players,
-    `Enter the name of the player that you want to wake up`
-  );
-  const messageForPlayer = await asyncReadline(
-    rl,
-    `What do you want to say to the player? `
-  );
-
-  await runPlayerConversationWithStoryteller(
-    systemInstruction,
-    rl,
-    player,
-    `The storyteller wakes you in the night to tell you: "${messageForPlayer}"`
-  );
-  return runNightPhase();
-}
-
-async function usePublicAbility(
-  player: Player,
-  message: string,
-  selectedPlayer?: string
-) {
-  console.info(`${player.name} wants to use a public ability: ${message}`);
-
-  await broadcastMessage(
-    players,
-    `${player.name} has used a public ability: ${message}`,
-    [player.name]
-  );
-
-  const userInput = (
-    await asyncReadline(
-      rl,
-      `${player.name} has tried to use a public ability. Would you like to [S]end a message, [K]ill a player or [E]nd the game? `
-    )
-  ).toUpperCase();
-
-  if (userInput === 'K') {
-    await selectAndKillPlayer(rl, players);
-
-    const gameStatus = getGameStatus();
-    if (gameStatus !== 'ongoing') {
-      return finishGame(gameStatus);
-    }
-  } else if (userInput === 'E') {
-    const winningTeam = (
-      await asyncReadline(
-        rl,
-        `What team should win the game? [G]ood or [Evil]? `
-      )
-    ).toUpperCase();
-
-    return finishGame(winningTeam === 'G' ? 'good-wins' : 'evil-wins');
-  } else if (userInput !== 'S') {
-    console.warn(`You must choose [S], [K] or [E]!`);
-    return usePublicAbility(player, message, selectedPlayer);
-  }
-
-  const messageForTown = await asyncReadline(
-    rl,
-    `How would you respond to to the town: `
-  );
-  await broadcastMessage(players, messageForTown);
-}
+} from './storyteller';
+import { NominationResult, Player, PlayerDiscussionResult } from './types';
 
 /**
  * Gets player input and returns the action taken
  *
+ * @param systemInstruction
+ * @param rl
+ * @param players All players in the game
  * @param selectedPlayer The player who should take an input
  * @param nominationsOpen Are nominations open yet?
  * @param existingNomination The current player who is on the block, if any
  */
-async function getPlayerInputForDiscussionPhase(
+export const getPlayerInputForDiscussionPhase = async (
+  systemInstruction: string,
+  rl: readline.Interface,
+  players: Player[],
   selectedPlayer: Player,
   nominationsOpen: boolean,
   existingNomination?: NominationResult
-): Promise<PlayerDiscussionResult> {
+): Promise<PlayerDiscussionResult> => {
   const playerResponse = await sendMessageToPlayer(
     systemInstruction,
     selectedPlayer,
@@ -252,6 +107,8 @@ async function getPlayerInputForDiscussionPhase(
     }
 
     await usePublicAbility(
+      rl,
+      players,
       selectedPlayer,
       playerResponse.message,
       playerResponse.players?.length ? playerResponse.players[0] : undefined
@@ -369,9 +226,13 @@ async function getPlayerInputForDiscussionPhase(
   throw new Error(
     `Invalid action '${playerResponse.action}' during the discussion phase from ${selectedPlayer.name}`
   );
-}
+};
 
-async function completeDiscussionPhase(nomination?: NominationResult) {
+export const completeDiscussionPhase = async (
+  rl: readline.Interface,
+  players: Player[],
+  nomination?: NominationResult
+): Promise<void> => {
   if (!nomination) {
     const message = `The day is now over and no one made any nominations! Good night!`;
     await broadcastMessage(players, message);
@@ -390,7 +251,7 @@ async function completeDiscussionPhase(nomination?: NominationResult) {
     if (nomination.nominee.status === 'alive') {
       nomination.nominee.status = 'dead-with-vote';
 
-      const gameStatus = getGameStatus();
+      const gameStatus = getGameStatus(players);
       if (gameStatus !== 'ongoing') {
         return finishGame(gameStatus);
       }
@@ -406,56 +267,23 @@ async function completeDiscussionPhase(nomination?: NominationResult) {
   }
 
   console.warn(`You must choose [Y] or [N]!`);
-  return completeDiscussionPhase(nomination);
-}
+  return completeDiscussionPhase(rl, players, nomination);
+};
 
-function getGameStatus(): GameStatus {
-  let aliveDemons = 0;
-  let alivePlayers = 0;
-
-  for (const player of players) {
-    if (player.status !== 'alive') {
-      continue;
-    }
-
-    alivePlayers++;
-
-    // TODO: Check the role type rather than the role name
-    if (player.actualRole === 'Imp') {
-      aliveDemons++;
-    }
-  }
-
-  if (!aliveDemons) {
-    return 'good-wins';
-  } else if (alivePlayers <= 2) {
-    return 'evil-wins';
-  }
-
-  return 'ongoing';
-}
-
-function finishGame(status: GameStatus) {
-  if (status === 'good-wins') {
-    console.info(`The good team wins! Congratulations!`);
-    return;
-  }
-
-  console.info(`The evil team wins! Congratulations!`);
-  return;
-}
-
-async function runDiscussionPhase(
+export const runDiscussionPhase = async (
+  systemInstruction: string,
+  rl: readline.Interface,
+  players: Player[],
   messageCount = 0,
   nominationsOpen = false,
   existingNomination?: NominationResult
-) {
+): Promise<void> => {
   // Every 6 messages, check if the storyteller wants to continue the discussion
   if (!nominationsOpen && messageCount >= 6 && messageCount % 6 === 0) {
     const userInput = (
       await asyncReadline(
         rl,
-        `Would you like to [C]ontinue discussion or [O]pen nominations: `
+        `Would you like to [C]ontinue discussion, [M]ake an announcement or [O]pen nominations: `
       )
     ).toUpperCase();
 
@@ -465,31 +293,59 @@ async function runDiscussionPhase(
         players,
         `The storyteller has opened nominations! Does anyone have a player that they wish to nominate for execution?`
       );
-      return runDiscussionPhase(messageCount + 1, true);
-    } else if (userInput !== 'C') {
-      console.error(`You must respond with either [C] or [O]!`);
       return runDiscussionPhase(
+        systemInstruction,
+        rl,
+        players,
+        messageCount + 1,
+        true
+      );
+    } else if (userInput === 'M') {
+      await makeStorytellerAnnouncement(rl, players);
+      return runDiscussionPhase(
+        systemInstruction,
+        rl,
+        players,
+        messageCount + 1,
+        nominationsOpen
+      );
+    } else if (userInput !== 'C') {
+      console.error(`You must respond with either [C], [M] or [O]!`);
+      return runDiscussionPhase(
+        systemInstruction,
+        rl,
+        players,
         messageCount + 1,
         nominationsOpen,
         existingNomination
       );
     }
-  } else if (
-    nominationsOpen &&
-    (existingNomination || messageCount % 2 === 0)
-  ) {
+  } else if (nominationsOpen && messageCount % 4 === 0) {
     const userInput = (
       await asyncReadline(
         rl,
-        `Would you like to [C]ontinue nominations or [E]nd the day: `
+        `Would you like to [C]ontinue nominations, [M]ake an announcement or [E]nd the day: `
       )
     ).toUpperCase();
 
     if (userInput === 'E') {
-      return completeDiscussionPhase(existingNomination);
-    } else if (userInput !== 'C') {
-      console.error(`You must respond with either [C] or [E]!`);
+      return completeDiscussionPhase(rl, players, existingNomination);
+    } else if (userInput === 'M') {
+      await makeStorytellerAnnouncement(rl, players);
       return runDiscussionPhase(
+        systemInstruction,
+        rl,
+        players,
+        messageCount + 1,
+        nominationsOpen,
+        existingNomination
+      );
+    } else if (userInput !== 'C') {
+      console.error(`You must respond with either [C], [M] or [E]!`);
+      return runDiscussionPhase(
+        systemInstruction,
+        rl,
+        players,
         messageCount + 1,
         nominationsOpen,
         existingNomination
@@ -502,10 +358,13 @@ async function runDiscussionPhase(
   const selectedPlayer = getRandomActivePlayer(players);
 
   if (!selectedPlayer) {
-    return completeDiscussionPhase(existingNomination);
+    return completeDiscussionPhase(rl, players, existingNomination);
   }
 
   const result = await getPlayerInputForDiscussionPhase(
+    systemInstruction,
+    rl,
+    players,
     selectedPlayer,
     nominationsOpen,
     existingNomination
@@ -513,6 +372,9 @@ async function runDiscussionPhase(
 
   if (result.nomination && result.nomination.result !== 'insufficient-votes') {
     return runDiscussionPhase(
+      systemInstruction,
+      rl,
+      players,
       messageCount + 1,
       nominationsOpen,
       result.nomination.result === 'tie' ? undefined : result.nomination
@@ -520,54 +382,11 @@ async function runDiscussionPhase(
   }
 
   return runDiscussionPhase(
+    systemInstruction,
+    rl,
+    players,
     result.action === 'idle' ? messageCount : messageCount + 1,
     nominationsOpen,
     existingNomination
   );
-}
-
-async function runDayNightCycle(dayCount = 1) {
-  const gameStatus = getGameStatus();
-  if (gameStatus !== 'ongoing') {
-    return finishGame(gameStatus);
-  }
-
-  console.info(`It is now the night. All players close their eyes.`);
-
-  console.info(
-    `These are the players in the game in clockwise order, starting ta the top of the circle:`
-  );
-
-  for (const player of players) {
-    if (player.tokenShown) {
-      console.info(
-        ` - ${player.name} (${formatPlayerStatus(player.status)}: ${
-          player.actualRole
-        } (Shown ${player.tokenShown})]`
-      );
-      continue;
-    }
-    console.info(` - ${player.name}: ${player.actualRole}`);
-  }
-
-  await runNightPhase();
-
-  const userInput = await asyncReadline(
-    rl,
-    `The night phase is now over. What would you like to say to the town as they wake in the morning: `
-  );
-
-  await broadcastMessage(players, userInput);
-  await runDiscussionPhase();
-
-  await runDayNightCycle(dayCount + 1);
-}
-
-async function runTestGame() {
-  await initializePlayers(systemInstruction, players);
-  await runDayNightCycle();
-}
-
-runTestGame()
-  .then(() => console.info(`Done!`))
-  .catch(err => console.error(`It failed`, err));
+};

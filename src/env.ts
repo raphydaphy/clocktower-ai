@@ -6,9 +6,7 @@ export const env = createEnv({
     NODE_ENV: z
       .enum(['development', 'production', 'test'])
       .default('development'),
-    PORT: z.coerce.number().default(8080),
     LOG_LEVEL: z.string().default('info'),
-    PROJECT_ID: z.string(),
     GEMINI_API_KEY: z.string(),
   },
   runtimeEnv: process.env,

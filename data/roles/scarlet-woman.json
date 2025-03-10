@@ -1,6 +1,6 @@
 {
   "name": "Scarlet Woman",
-  "type": "townsfolk",
+  "type": "minion",
   "ability": "If there are 5 or more players alive & the Demon dies, you become the Demon.",
   "detailed_description": "The Scarlet Woman becomes the Demon when the Demon dies. If there are five or more players just before the Demon dies—that is, four or more players left alive after the Demon dies—then the Scarlet Woman immediately becomes the Demon, and the game continues as if nothing happened. Travellers do not count as players when seeing if the Scarlet Woman's ability triggers.  If less than five players are alive when the Demon is executed, then the game ends and good wins. If five or more players are alive when the Imp kills themself at night, the Scarlet Woman must become the new Imp. If the Scarlet Woman becomes the Demon, they are that Demon in every way. Good wins if they are executed. They attack each night. They register as the Demon. If there are multiple demons on the script, they become the same type of Demon that died, and they gain this Demon's ability.",
   "player_tips": [

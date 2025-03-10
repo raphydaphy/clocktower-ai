@@ -4,6 +4,17 @@ export type GameStatus = 'evil-wins' | 'good-wins' | 'ongoing';
 
 export type PlayerStatus = 'alive' | 'dead-with-vote' | 'dead-without-vote';
 
+export type Role = {
+  name: string;
+  type: 'townsfolk' | 'outsider' | 'minion' | 'demon';
+  ability: string;
+  detailed_description: string;
+  player_tips: string[];
+  bluffing_tips?: string[];
+  fighting_tips?: string[];
+  examples?: string[];
+};
+
 export type Player = {
   name: string;
   actualRole: string;

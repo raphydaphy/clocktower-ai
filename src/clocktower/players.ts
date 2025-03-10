@@ -1,10 +1,12 @@
 import fs from 'node:fs';
+import path from 'node:path';
 
 import readline from 'readline';
 
-import { asyncReadline } from '../readline';
-import { joinWithWord } from '../utils';
-import { generateResponse } from '../vertex-ai';
+import { GENERATED_DATA_DIRECTORY } from '../services/constants';
+import { asyncReadline } from '../services/readline';
+import { joinWithWord } from '../services/utils';
+import { generateResponse } from '../services/vertex-ai';
 import { Player, PlayerResponse, PlayerStatus } from './types';
 
 export const sendMessageToPlayer = async (
@@ -12,7 +14,7 @@ export const sendMessageToPlayer = async (
   player: Player,
   message: string,
   allowedActions: string[],
-  rl?: readline.Interface
+  _rl?: readline.Interface
 ): Promise<PlayerResponse> => {
   const res = await generateResponse(
     systemInstruction,
@@ -33,23 +35,13 @@ export const sendMessageToPlayer = async (
   );
   player.actionHistory.push(res.action);
 
-  if (rl) {
-    fs.writeFileSync(
-      './generated/latest.json',
-      JSON.stringify(player.chatHistory, null, 2),
-      'utf-8'
-    );
-
-    await asyncReadline(rl, `Digest file saved. Press enter to continue > `);
-  }
-
   fs.appendFileSync(
-    `./generated/${player.name}.csv`,
+    path.resolve(GENERATED_DATA_DIRECTORY, `./${player.name}.csv`),
     `"Storyteller","${message}","",""\n`,
     'utf-8'
   );
   fs.appendFileSync(
-    `./generated/${player.name}.csv`,
+    path.resolve(GENERATED_DATA_DIRECTORY, `./${player.name}.csv`),
     `"Action","${res.message || ''}","${res.action}","${res.reasoning}"\n`,
     'utf-8'
   );
@@ -141,7 +133,7 @@ export const initializePlayers = async (
 
     player.chatHistory = [];
     fs.writeFileSync(
-      `./generated/${player.name}.csv`,
+      path.resolve(GENERATED_DATA_DIRECTORY, `./${player.name}.csv`),
       '"Type","Message","Action","Reasoning"\n',
       'utf-8'
     );
@@ -178,7 +170,7 @@ export const broadcastMessage = async (
     });
     player.actionHistory.push('hear_message');
     fs.appendFileSync(
-      `./generated/${player.name}.csv`,
+      path.resolve(GENERATED_DATA_DIRECTORY, `./${player.name}.csv`),
       `"Message","${message}","",""\n`
     );
   }

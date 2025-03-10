@@ -7,7 +7,7 @@ import {
 import { z } from 'zod';
 
 import { env } from '../env';
-import { PlayerResponse } from './clocktower/types';
+import { PlayerResponse } from '../clocktower/types';
 
 export const aiClient = new GoogleGenerativeAI(env.GEMINI_API_KEY);
 

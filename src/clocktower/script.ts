@@ -1,28 +1,24 @@
 import * as fs from 'node:fs';
+import path from 'node:path';
 
-type Role = {
-  name: string;
-  type: 'townsfolk' | 'outsider' | 'minion' | 'demon';
-  ability: string;
-  detailed_description: string;
-  player_tips: string[];
-  bluffing_tips?: string[];
-  fighting_tips?: string[];
-  examples?: string[];
-};
+import { PROMPTS_DIRECTORY, ROLES_DIRECTORY } from '../services/constants';
+import { Role } from './types';
 
-const getRoleJson = (role: string): Role => {
+export const getRoleJson = (role: string): Role => {
   return JSON.parse(
     fs.readFileSync(
-      `./roles/${role.toLowerCase().replace(/\s/g, '-')}.json`,
+      path.resolve(
+        ROLES_DIRECTORY,
+        `./${role.toLowerCase().replace(/\s/g, '-')}.json`
+      ),
       'utf-8'
     )
   );
 };
 
-const createSystemPrompt = (roles: string[]) => {
+export const createSystemPrompt = (roles: string[]): string => {
   const introductionPrompt = fs.readFileSync(
-    './prompts/introduction.txt',
+    path.resolve(PROMPTS_DIRECTORY, './introduction.txt'),
     'utf-8'
   );
 
@@ -89,25 +85,11 @@ const createSystemPrompt = (roles: string[]) => {
     );
   }
 
-  const conclusionPrompt = fs.readFileSync('./prompts/conclusion.txt', 'utf-8');
+  const conclusionPrompt = fs.readFileSync(
+    path.resolve(PROMPTS_DIRECTORY, './conclusion.txt'),
+    'utf-8'
+  );
   scriptPromptParts.push(`\n\n${conclusionPrompt}`);
 
   return scriptPromptParts.join('\n');
 };
-
-fs.writeFileSync(
-  './prompts/generated.txt',
-  createSystemPrompt([
-    'investigator',
-    'clockmaker',
-    'empath',
-    'chambermaid',
-    'artist',
-    'sage',
-    'drunk',
-    'klutz',
-    'baron',
-    'scarlet-woman',
-    'imp',
-  ])
-);

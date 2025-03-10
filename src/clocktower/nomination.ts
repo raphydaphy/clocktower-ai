@@ -1,7 +1,7 @@
 import readline from 'readline';
 
-import { asyncReadline } from '../readline';
-import { randomSleep } from '../utils';
+import { asyncReadline } from '../services/readline';
+import { randomSleep } from '../services/utils';
 import {
   broadcastMessage,
   getRandomActivePlayer,
