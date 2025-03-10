@@ -8,6 +8,7 @@ type Role = {
   player_tips: string[];
   bluffing_tips?: string[];
   fighting_tips?: string[];
+  examples?: string[];
 };
 
 const getRoleJson = (role: string): Role => {
@@ -63,6 +64,15 @@ const createSystemPrompt = (roles: string[]) => {
         `\nBelow are some tips for fighting against the ${roleJson.name}:`
       );
       for (const playerTip of roleJson.fighting_tips) {
+        scriptPromptParts.push(` - ${playerTip}`);
+      }
+    }
+
+    if (roleJson.examples) {
+      scriptPromptParts.push(
+        `\nBelow are some examples of how the ${roleJson.name} role is used:`
+      );
+      for (const playerTip of roleJson.examples) {
         scriptPromptParts.push(` - ${playerTip}`);
       }
     }

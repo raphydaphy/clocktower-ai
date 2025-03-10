@@ -94,6 +94,7 @@ export const runNominationDiscussion = async (
 
   const randomPlayer = getRandomActivePlayer(players);
   if (!randomPlayer) {
+    console.info(`All players have chosen to idle`);
     return;
   }
 
@@ -185,6 +186,7 @@ export const startNomination = async (
 
   const votePrompt = [
     `Votes for ${nominee.name} will begin with ${voteOrder[0].name} and end with ${nominee.name}, going clockwise around the circle`,
+    `You don't have to vote if you don't want to, and sometimes it's beneficial to ensure that not too many people vote so that you still can overturn the nomination later in the day if you find a better candidate or learn new information.`,
     !existingNomination &&
       `If at least the majority of alive players vote, then ${nominee.name} will be put on the block for execution.`,
     !existingNomination &&

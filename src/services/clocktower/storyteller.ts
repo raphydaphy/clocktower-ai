@@ -50,7 +50,7 @@ export const selectAndKillPlayer = async (
     `Enter the name of the player that you want to kill`
   );
 
-  if (player.status !== 'alive') {
+  if (player.status === 'alive') {
     console.info(`You have killed ${player.name}!`);
     player.status = 'dead-with-vote';
   } else {

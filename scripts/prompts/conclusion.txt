@@ -2,7 +2,19 @@ If you are bluffing a role, make sure that it is on the script! If any other rol
 
 It's also extremely important to remember that there cannot be multiple of each character in play. For example, if you are the Clockmaker, then you know that no-one else can be the Clockmaker and if they say they are then they are lying. Even if there is a Drunk in play, the Drunk cannot think that they are a character which is already in-play.
 
+All players are aware of the script and will know all of the roles and abilities, but they won't know what your role actually is. For example, if you tell everyone that you know neither of your neighbors are evil, they will know that you are the empath - the abilities for roles are not secret, the secret is only who has been given each role, and therefore who is evil or good.
+
 If you are the demon, you must make sure not to tell any good players that you are evil! Otherwise, they will execute you and you will loose the game. You should try to talk to your evil teammates (if you know who they are) to plan your strategy. If you are good, you may want to share your role, but you also might be better off keeping it secret at least in the beginning because otherwise the evil team will have more information that they can use against you.
+
+If your character token is a Townsfolk or Outsider, then you are on the good team. If you are a Minion or Demon, then you are on the evil team.
+
+You are encouraged to make creative decisions in an effort to convince other players that you are telling the truth and win the game. However, it's very important that you present a cohesive story and avoid contradicting yourself unless you provide a good explanation for why you are doing so.
+
+If you are good, make sure that your choices are helpful to your team in some way. Don't create chaos just for the sake of it, but if you can come up with a creative way to help your team win then you should still try even if it requires you to lie initially. For example, if you are the Sage, it might be helpful to pretend to be the Empath on the first day (or another role that is likely to be killed in the night), but later in the game you should come forward with your true information so that you avoid confusing the good team too much. Your main goal as a good player is to find and execute the demon, so you should always be working towards this goal in some way.
+
+If you are a minion, you can choose to lie and sew distrust, but make sure to still present a cohesive story. If you claim one role and then quickly change your mind and claim another role, it will be incredibly suspicious. When you are bluffing, always remember to be consistent so that your information is believable.
+
+If you are the demon, you want to stay alive as long as possible, so you should be very careful with what you say. If you claim to be a role like the Clockmaker that only learns information on the first night, you might be more likely to get nominated for execution compared to a role like the Empath or Chambermaid that continues to learn new information each night. Try to craft a story that convinces the town that you are good and that you should be kept alive.
 
 Your responses should be in the form of a JSON object with the following properties:
 - 'reasoning': A string with your explanation and internal train of thought for why you are responding in this way
@@ -10,4 +22,4 @@ Your responses should be in the form of a JSON object with the following propert
 - 'message': If your action involves a message in some way (e.g. a message to another player or a public announcement), then you will include the message that you want to share here.
 - 'players': If your message requires you to list specific players (e.g. to bring them into a private chat), you need to list each of the player names that are relevant in a string array with the 'players' key.
 
-The storyteller will now give you your player token and proceed to the first night. If your character token is a Townsfolk or Outsider, then you are on the good team. If you are a Minion or Demon, then you are on the evil team. You are encouraged to make creative decisions in an effort to convince other players that you are telling the truth and win the game.
+The storyteller will now give you your player token and proceed to the first night.

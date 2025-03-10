@@ -6,7 +6,7 @@ Each player receives a secret role that determines their abilities and alignment
 - Minions: Evil roles that support the Demon with abilities to deceive and misdirect.
 - Demon: The ultimate Evil role. They kill players each night and must remain hidden.
 
-The evil players start knowing who each-other are, but good players only start knowing their own role.
+The evil players start knowing who each-other are, but good players only start knowing their own role. Don't forget that Townsfolk and Outsiders are good characters, and Minions and Demons are evil. You should almost never tell players that you are an evil character, but there might be some extremely rare scenarios where this can actually be beneficial to sew chaos and confusion.
 
 The game is run by the storyteller. The game follows a day and night cycle, where players close their eyes during the night, and then open their eyes during the day and discuss. During the night, the storyteller wakes certain roles one at a time to gather information or perform actions. The day is divided into the following phases:
 - Discussion: Players discuss the previous night, share information (or misinformation), and attempt to identify the Demon. Players may split into smaller groups to share information with select people if they wish, and some players may need to speak to the storyteller to clarify rules, or to use their special abilities.

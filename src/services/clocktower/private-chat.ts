@@ -1,22 +1,29 @@
-import { Player } from './types';
+import readline from 'readline';
+
 import { joinWithWord, randomSleep } from '../utils';
 import {
   broadcastMessage,
   getRandomActivePlayer,
   sendMessageToPlayer,
 } from './players';
+import { Player } from './types';
 
 export const getPlayerInputInPrivateChat = async (
   systemInstruction: string,
+  rl: readline.Interface,
   player: Player,
-  otherPlayers: Player[]
+  otherPlayers: Player[],
+  messageCount = 0
 ): Promise<void> => {
   const otherPlayerNames = joinWithWord(otherPlayers.map(p => p.name));
   const playerResponse = await sendMessageToPlayer(
     systemInstruction,
     player,
-    `Would you like to say anything in the private chat with ${otherPlayerNames} ? You must respond with a JSON object with three properties. The 'reasoning' property should include a string of your current train of thought, the 'action' property should either be 'idle' (to listen and wait for others to say something) or 'private_message' (to say something in the private chat). If you choose 'private_message', you must also include a 'message' property with the message you want to share in the private chat.`,
-    ['idle', 'private_message']
+    `Would you like to say ${
+      messageCount ? 'anything else' : 'anything'
+    } in the private chat with ${otherPlayerNames} ? You must respond with a JSON object with three properties. The 'reasoning' property should include a string of your current train of thought, the 'action' property should either be 'idle' (to listen and wait for others to say something) or 'private_message' (to say something in the private chat). If you choose 'private_message', you must also include a 'message' property with the message you want to share in the private chat.`,
+    ['idle', 'private_message'],
+    rl
   );
 
   if (playerResponse.action === 'idle') {
@@ -39,7 +46,9 @@ export const getPlayerInputInPrivateChat = async (
 
 export const runPrivateChat = async (
   systemInstruction: string,
-  playersInChat: Player[]
+  rl: readline.Interface,
+  playersInChat: Player[],
+  messageCount = 0
 ): Promise<void> => {
   await randomSleep();
 
@@ -51,17 +60,20 @@ export const runPrivateChat = async (
 
   await getPlayerInputInPrivateChat(
     systemInstruction,
+    rl,
     randomPlayerInChat,
     playersInChat.filter(
       otherPlayer => otherPlayer.name !== randomPlayerInChat.name
-    )
+    ),
+    messageCount
   );
 
-  return runPrivateChat(systemInstruction, playersInChat);
+  return runPrivateChat(systemInstruction, rl, playersInChat, messageCount + 1);
 };
 
 export const startPrivateChat = async (
   systemInstruction: string,
+  rl: readline.Interface,
   requesterPlayer: Player,
   otherPlayerNames: string[],
   allPlayers: Player[]
@@ -100,10 +112,11 @@ export const startPrivateChat = async (
 
   await getPlayerInputInPrivateChat(
     systemInstruction,
+    rl,
     requesterPlayer,
     otherPlayers
   );
-  await runPrivateChat(systemInstruction, playersInChat);
+  await runPrivateChat(systemInstruction, rl, playersInChat, 1);
 
   for (const playerInChat of playersInChat) {
     const otherPlayersInChat = joinWithWord(

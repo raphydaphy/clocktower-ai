@@ -11,7 +11,8 @@ export const sendMessageToPlayer = async (
   systemInstruction: string,
   player: Player,
   message: string,
-  allowedActions: string[]
+  allowedActions: string[],
+  rl?: readline.Interface
 ): Promise<PlayerResponse> => {
   const res = await generateResponse(
     systemInstruction,
@@ -31,6 +32,16 @@ export const sendMessageToPlayer = async (
     }
   );
   player.actionHistory.push(res.action);
+
+  if (rl) {
+    fs.writeFileSync(
+      './generated/latest.json',
+      JSON.stringify(player.chatHistory, null, 2),
+      'utf-8'
+    );
+
+    await asyncReadline(rl, `Digest file saved. Press enter to continue > `);
+  }
 
   fs.appendFileSync(
     `./generated/${player.name}.csv`,

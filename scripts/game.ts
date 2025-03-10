@@ -27,43 +27,43 @@ import { startNomination } from '../src/services/clocktower/nomination';
 // Players are in clockwise order, starting from the top middle of the circle
 const players: Player[] = [
   {
-    name: 'Maya',
-    actualRole: 'Klutz',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Joanna',
-    actualRole: 'Investigator',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Anne',
-    actualRole: 'Empath',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Ziggy',
-    actualRole: 'Artist',
-    chatHistory: [],
-    actionHistory: [],
-    status: 'alive',
-  },
-  {
-    name: 'Arun',
+    name: 'Harper',
     actualRole: 'Scarlet Woman',
     chatHistory: [],
     actionHistory: [],
     status: 'alive',
   },
   {
-    name: 'Harper',
+    name: 'Maya',
+    actualRole: 'Empath',
+    chatHistory: [],
+    actionHistory: [],
+    status: 'alive',
+  },
+  {
+    name: 'Arun',
+    actualRole: 'Artist',
+    chatHistory: [],
+    actionHistory: [],
+    status: 'alive',
+  },
+  {
+    name: 'Ziggy',
     actualRole: 'Imp',
+    chatHistory: [],
+    actionHistory: [],
+    status: 'alive',
+  },
+  {
+    name: 'Joanna',
+    actualRole: 'Clockmaker',
+    chatHistory: [],
+    actionHistory: [],
+    status: 'alive',
+  },
+  {
+    name: 'Anne',
+    actualRole: 'Chambermaid',
     chatHistory: [],
     actionHistory: [],
     status: 'alive',
@@ -115,7 +115,7 @@ async function runNightPhase() {
     systemInstruction,
     rl,
     player,
-    messageForPlayer
+    `The storyteller wakes you in the night to tell you: "${messageForPlayer}"`
   );
   return runNightPhase();
 }
@@ -136,7 +136,7 @@ async function usePublicAbility(
   const userInput = (
     await asyncReadline(
       rl,
-      `${player.name} has tried to use a public ability. Would you like to [S]end a message, [K]ill a player or [E]nd the game?`
+      `${player.name} has tried to use a public ability. Would you like to [S]end a message, [K]ill a player or [E]nd the game? `
     )
   ).toUpperCase();
 
@@ -187,10 +187,15 @@ async function getPlayerInputForDiscussionPhase(
       !nominationsOpen && `It's currently the discussion phase`,
       nominationsOpen &&
         !existingNomination &&
+        selectedPlayer.status === 'alive' &&
         `It's currently the nomination phase. You can nominate a player for execution, or make a public announcement. You can no longer talk to the storyteller in private (e.g. to use character abilities) - you'll need to wait until the next day if you want to do this.`,
       nominationsOpen &&
         existingNomination &&
+        selectedPlayer.status === 'alive' &&
         `It's currently the nomination phase and ${existingNomination.nominee} is on the block for execution with ${existingNomination.votes} votes. You can still nominate a different player if you think they should die instead, or you can do nothing and the ${existingNomination.nominee.name} will be executed shortly.`,
+      nominationsOpen &&
+        selectedPlayer.status !== 'alive' &&
+        `It's currently the nomination phase. You can't nominate anyone because you are dead, but you can still participate in the discussion.`,
     ]
       .filter(Boolean)
       .join(' ')}. You can make any of the following actions: \n${[
@@ -202,6 +207,7 @@ async function getPlayerInputForDiscussionPhase(
       !nominationsOpen &&
         ` - 'talk_to_storyteller': Privately ask the storyteller a question. You will need to include your message for the storyteller in the 'message' property`,
       nominationsOpen &&
+        selectedPlayer.status === 'alive' &&
         ` - 'nominate': Make a nomination for a specific player. You can only nominate once per day, and each player can only be nominated once per day. You need to include a message to share with the town in the 'message' property as well as the name of the player you want to nominate as a single entry in the 'players' array.`,
       ` - 'idle': Do nothing, and listen to what other members of the town do first. Don't be afraid to idle and listen for other input before jumping in, often it is better to stay quiet than to over-share, even if you are good.`,
     ]
@@ -214,7 +220,7 @@ async function getPlayerInputForDiscussionPhase(
       !nominationsOpen && 'public_ability',
       !nominationsOpen && 'request_private_chat',
       !nominationsOpen && 'talk_to_storyteller',
-      nominationsOpen && 'nominate',
+      nominationsOpen && selectedPlayer.status === 'alive' && 'nominate',
       'idle',
     ].filter(Boolean) as string[]
   );
@@ -306,6 +312,7 @@ async function getPlayerInputForDiscussionPhase(
     );
     await startPrivateChat(
       systemInstruction,
+      rl,
       selectedPlayer,
       playerResponse.players,
       players
@@ -327,6 +334,10 @@ async function getPlayerInputForDiscussionPhase(
     } else if (!playerResponse.message) {
       throw new Error(
         `${selectedPlayer.name} made a nomination without a message!`
+      );
+    } else if (selectedPlayer.status !== 'alive') {
+      throw new Error(
+        `${selectedPlayer.name} tried to nominate when they were dead!`
       );
     }
 

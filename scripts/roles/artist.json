@@ -20,5 +20,9 @@
     "Decide whether your information is going to contradict the good team's information or not. This is riskier as a Demon, since if you contradict, the good team will likely kill you out of suspicion. As a Minion, you can be more deliberate about setting up a counter-argument, since your execution is not the end of the game, and if you manage to convince the group of something false in the meantime, all the better!",
     "Beware of the Vortox - if you know one is in play, you'll have to be careful about giving 'true' information, since the Vortox would make your 'good' information false.",
     "Don't reveal this bluff right away - in the early game, an Artist who has asked their question is prime bait for a mercy execution to appease a potential Vortox. If you're that Vortox, that would be an embarrassing end!"
+  ],
+  "examples": [
+    "If you are the Artist, you can ask the storyteller a private question, but you can only do this once during the game. Once you have decided that you are ready to ask your question, during the discussion phase, use the talk_to_storyteller action to privately ask the storyteller your yes/no question. The storyteller will give you an answer, and you can't ask any follow-up questions.",
+    "If you are pretending to be the Artist, you can still choose to ask the storyteller a private question. Since you aren't really the Artist, the storyteller won't actually answer your question, but if you are pretending to be the artist then you should still ask a question since it helps to convince the town that you are telling the truth. It can be helpful to pretend to be the Artist as an evil player since you can make up an answer to your question and tell the town to mislead them."
   ]
 }
