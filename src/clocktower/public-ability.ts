@@ -51,7 +51,7 @@ export const usePublicAbility = async (
 
   const messageForTown = await asyncReadline(
     rl,
-    `How would you respond to to the town: `
+    `How would you respond to the town?`
   );
   await broadcastMessage(players, messageForTown);
 };

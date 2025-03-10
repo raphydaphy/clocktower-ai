@@ -16,7 +16,7 @@ export const runNightPhase = async (
   const userInput = (
     await asyncReadline(
       rl,
-      `Would you like to [W]ake a player, [K]ill a player or [E]nd the night: `
+      `Would you like to [W]ake a player, [K]ill a player or [E]nd the night? `
     )
   ).toUpperCase();
 

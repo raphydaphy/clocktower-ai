@@ -64,7 +64,7 @@ export const makeStorytellerAnnouncement = async (
   rl: readline.Interface,
   players: Player[]
 ) => {
-  const message = await asyncReadline(rl, `What would you like to announce: `);
+  const message = await asyncReadline(rl, `What would you like to announce? `);
 
   await broadcastMessage(players, message);
 };

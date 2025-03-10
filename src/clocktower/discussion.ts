@@ -324,7 +324,7 @@ export const runDiscussionPhase = async (
     const userInput = (
       await asyncReadline(
         rl,
-        `Would you like to [C]ontinue nominations, [M]ake an announcement or [E]nd the day: `
+        `Would you like to [C]ontinue nominations, [M]ake an announcement or [E]nd the day? `
       )
     ).toUpperCase();
 

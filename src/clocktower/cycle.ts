@@ -26,10 +26,17 @@ export async function runDayNightCycle(
 
   const userInput = await asyncReadline(
     rl,
-    `The night phase is now over. What would you like to say to the town as they wake in the morning: `
+    `The night phase is now over. What would you like to say to the town as they wake in the morning? `
   );
 
-  await broadcastMessage(players, userInput);
+  await broadcastMessage(
+    players,
+    `${userInput}. ${
+      dayCount > 1
+        ? `If you died and you are the Klutz or claiming to be the Klutz, then you need to announce this now and choose a player soon. If your role gained information during the night, or if you are bluffing a role that gains information during the night, you can share that now if you wish. Remember to maintain a consistent alibi and avoid contradicting yourself. `
+        : ''
+    } `
+  );
   await runDiscussionPhase(systemInstruction, rl, players);
 
   await runDayNightCycle(systemInstruction, rl, players, dayCount + 1);

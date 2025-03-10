@@ -7,6 +7,7 @@ import {
   getRandomActivePlayer,
   sendMessageToPlayer,
 } from './players';
+import { makeStorytellerAnnouncement } from './storyteller';
 import { NominationResult, Player } from './types';
 
 /**
@@ -71,14 +72,24 @@ export const runNominationDiscussion = async (
     const userInput = (
       await asyncReadline(
         rl,
-        `Would you like to [C]ontinue discussion or [P]roceed to voting: `
+        `Would you like to [C]ontinue discussion, [M]ake an announcement or [P]roceed to voting? `
       )
     ).toUpperCase();
 
     if (userInput === 'P') {
       return;
+    } else if (userInput === 'M') {
+      await makeStorytellerAnnouncement(rl, players);
+      return runNominationDiscussion(
+        systemInstruction,
+        rl,
+        players,
+        nominator,
+        nominee,
+        messageCount + 1
+      );
     } else if (userInput !== 'C') {
-      console.error(`You must respond with either [C] or [P]!`);
+      console.error(`You must respond with either [C], [M] or [P]!`);
       return runNominationDiscussion(
         systemInstruction,
         rl,
