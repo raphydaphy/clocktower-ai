@@ -23,7 +23,8 @@ export const SCRIPT = [
 export const PLAYERS: Player[] = [
   {
     name: 'Maya',
-    actualRole: 'Empath',
+    actualRole: 'Drunk',
+    tokenShown: 'Empath',
     chatHistory: [],
     actionHistory: [],
     status: 'alive',
@@ -36,7 +37,7 @@ export const PLAYERS: Player[] = [
     status: 'alive',
   },
   {
-    name: 'Raph',
+    name: 'Alex',
     actualRole: 'Investigator',
     chatHistory: [],
     actionHistory: [],
@@ -50,16 +51,15 @@ export const PLAYERS: Player[] = [
     status: 'alive',
   },
   {
-    name: 'Hzel',
+    name: 'Angela',
     actualRole: 'Klutz',
-    tokenShown: 'Investigator',
     chatHistory: [],
     actionHistory: [],
     status: 'alive',
   },
   {
-    name: 'Fig',
-    actualRole: 'Scarlet Woman',
+    name: 'Courtney',
+    actualRole: 'Baron',
     chatHistory: [],
     actionHistory: [],
     status: 'alive',
