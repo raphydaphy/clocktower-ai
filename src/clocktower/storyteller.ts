@@ -63,7 +63,7 @@ export const selectAndKillPlayer = async (
 export const makeStorytellerAnnouncement = async (
   rl: readline.Interface,
   players: Player[]
-) => {
+): Promise<void> => {
   const message = await asyncReadline(rl, `What would you like to announce? `);
 
   await broadcastMessage(players, message);
